@@ -1,0 +1,13 @@
+*~
+*.jar
+*.war
+*.ear
+bin/
+target/
+logs/
+log/
+docker-compose.yml
+*.properties
+*.conf
+*.java-version
+venv/
