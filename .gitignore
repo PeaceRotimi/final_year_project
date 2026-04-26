@@ -3,7 +3,6 @@
 *.war
 *.ear
 bin/
-target/
 logs/
 log/
 docker-compose.yml
@@ -11,3 +10,4 @@ docker-compose.yml
 *.conf
 *.java-version
 venv/
+mysql_data/
