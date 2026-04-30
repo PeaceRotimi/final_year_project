@@ -1,0 +1,9 @@
+org/powertac/samplebroker/interfaces/MarketManager.class
+org/powertac/samplebroker/ContextManagerService.class
+org/powertac/samplebroker/PortfolioManagerService.class
+org/powertac/samplebroker/services/RedisConfig.class
+org/powertac/samplebroker/MarketManagerService.class
+org/powertac/samplebroker/PortfolioManagerService$CustomerRecord.class
+org/powertac/samplebroker/services/RedisBridge.class
+org/powertac/samplebroker/interfaces/PortfolioManager.class
+OrderPoll.class

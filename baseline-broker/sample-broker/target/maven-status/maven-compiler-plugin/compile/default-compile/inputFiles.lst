@@ -1,0 +1,8 @@
+/home/peacerotimi/final_year_project/baseline-broker/sample-broker/src/main/java/org/powertac/samplebroker/MarketManagerService.java
+/home/peacerotimi/final_year_project/baseline-broker/sample-broker/src/main/java/org/powertac/samplebroker/interfaces/PortfolioManager.java
+/home/peacerotimi/final_year_project/baseline-broker/sample-broker/src/main/java/org/powertac/samplebroker/services/OrderPoll.java
+/home/peacerotimi/final_year_project/baseline-broker/sample-broker/src/main/java/org/powertac/samplebroker/services/RedisBridge.java
+/home/peacerotimi/final_year_project/baseline-broker/sample-broker/src/main/java/org/powertac/samplebroker/services/RedisConfig.java
+/home/peacerotimi/final_year_project/baseline-broker/sample-broker/src/main/java/org/powertac/samplebroker/ContextManagerService.java
+/home/peacerotimi/final_year_project/baseline-broker/sample-broker/src/main/java/org/powertac/samplebroker/interfaces/MarketManager.java
+/home/peacerotimi/final_year_project/baseline-broker/sample-broker/src/main/java/org/powertac/samplebroker/PortfolioManagerService.java

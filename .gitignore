@@ -11,3 +11,5 @@ docker-compose.yml
 *.java-version
 venv/
 mysql_data/
+*.pytest_cache/
+*__pycache__/
