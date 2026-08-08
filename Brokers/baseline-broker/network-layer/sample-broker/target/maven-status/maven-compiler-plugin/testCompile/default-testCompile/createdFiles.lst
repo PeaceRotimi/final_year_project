@@ -1,0 +1,4 @@
+org/powertac/samplebroker/SampleBrokerTest.class
+org/powertac/samplebroker/RedisBridgeTest.class
+org/powertac/samplebroker/PortfolioManagerTest.class
+org/powertac/samplebroker/JsonConverterTest.class
