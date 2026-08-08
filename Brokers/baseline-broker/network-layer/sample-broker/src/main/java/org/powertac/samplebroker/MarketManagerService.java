@@ -70,7 +70,7 @@ implements MarketManager, Initializable, Activatable
   @Autowired
   private BrokerContext broker; // broker
 
-  // Spring fills in Autowired dependencies through a naming convention
+  
   @Autowired
   private BrokerPropertiesService propertiesService;
 
@@ -290,13 +290,11 @@ implements MarketManager, Initializable, Activatable
 
   public synchronized void handleMessage (WeatherReport report)
   {
-    // convert XML message to JSON
-
-    // String jsonWeather =  convertToJson(report);
-
-    // // Send it to Redis
-
-    // jedis.publish("weather_report", jsonWeather);
+    if(report !=null){
+      sendToRedis("weather-report", report);
+      log.info("Published WeatherReport for timeslot:" + report.getTimeslotIndex());
+    }
+    
 
   }
 
