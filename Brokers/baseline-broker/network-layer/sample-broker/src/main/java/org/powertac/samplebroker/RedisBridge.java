@@ -2,6 +2,9 @@ package org.powertac.samplebroker;
 import org.springframework.stereotype.Service;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.StreamEntryID;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  *
@@ -31,10 +34,14 @@ public class RedisBridge {
 
     }
 
-    // publishes redis messages if there is a message
-    public void publish(String channel,String message){
+    // adds JSON to Redis stream
+
+    public void publish(String streamName,String message){
         if(message != null && !message.isEmpty()){
-            jedis.publish(channel, message);
+            Map<String, String> payload = new HashMap<>();
+            payload.put("json",message);
+
+            jedis.xadd(streamName,StreamEntryID.NEW_ENTRY,payload);
         }
     }
 

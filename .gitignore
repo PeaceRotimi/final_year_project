@@ -18,3 +18,5 @@ mysql_data/
 *.env
 Brokers/sample-broker/
 raw_data/
+redis_monitor.txt
+redis_monitor.txt
