@@ -256,6 +256,11 @@ implements PortfolioManager, Initializable, Activatable
       record.produceConsume(cbd.getNetUsage()[i], i);
     }
     record.subscribedPopulation = subs;
+
+    if(cbd != null){
+      sendToRedis("game-state", cbd);
+      log.info("Published Customer Bootstrap Data: " + cbd.getCustomerName() + " (" + cbd.getPowerType() + ")");
+    }
   }
 
   /**
@@ -286,7 +291,10 @@ implements PortfolioManager, Initializable, Activatable
 
 
     }
-
+    if(spec != null){
+      sendToRedis("game-state", spec);
+      log.info("Published Tariff Spec ID: " + spec.getId() + " by " + spec.getBroker().getUsername() + " for " + spec.getPowerType());
+    }
 
   }
 
@@ -296,8 +304,10 @@ implements PortfolioManager, Initializable, Activatable
    */
   public synchronized void handleMessage (TariffStatus ts)
   {
-    log.info("TariffStatus: " + ts.getStatus());
-    sendToRedis("tariff_status",ts);
+    if(ts != null){
+      sendToRedis("customer-usage", ts);
+      log.info("Published Tariff Status Tariff ID: " + ts.getTariffId() + ts.getStatus());
+    }
   }
 
   /**
@@ -324,6 +334,10 @@ implements PortfolioManager, Initializable, Activatable
     TariffTransaction.Type txType = ttx.getTxType();
     CustomerRecord record = getCustomerRecordByTariff(ttx.getTariffSpec(),
                                                       ttx.getCustomerInfo());
+    if(ttx != null){
+      sendToRedis("customer-usage", ttx);
+      log.info("Published Tariff Transaction " + txType +  + ttx.getCustomerCount() + " customers, " + ttx.getKWh() + " kWh, charge" + ttx.getCharge());
+    }
 
     if (TariffTransaction.Type.SIGNUP == txType) {
       // keep track of customer counts
@@ -397,6 +411,10 @@ implements PortfolioManager, Initializable, Activatable
       }
       candidates.remove(original);
     }
+    if(tr != null){
+      sendToRedis("customer-usage", tr);
+      log.info("Published Tariff Revoke - Tariff ID: " + tr.getTariffId() + tr.getBroker().getUsername());
+    }
   }
 
   /**
@@ -405,8 +423,10 @@ implements PortfolioManager, Initializable, Activatable
    */
   public synchronized void handleMessage (BalancingControlEvent bce)
   {
-    log.info("BalancingControlEvent " + bce.getKwh());
-    sendToRedis("balancing_control_event",bce);
+    if(bce != null){
+      sendToRedis("customer-usage", bce);
+      log.info("Published Balancing Control Event -Tariff ID: " + bce.getTariffId()  + bce.getKwh() + " kWh curtailed");
+    }
   }
 
   // --------------- activation -----------------

@@ -82,11 +82,15 @@ public class PortfolioManagerTest
   @Test
   public void testCustomerBootstrap ()
   {
-    // set up a competition
-    CustomerInfo podunk = new CustomerInfo("Podunk", 3);
+    // set up a competition and add the PowerType to the customers
+    CustomerInfo podunk = new CustomerInfo("Podunk", 3)
+                              .withPowerType(PowerType.CONSUMPTION);
     customerRepo.add(podunk);
-    CustomerInfo midvale = new CustomerInfo("Midvale", 1000);
+
+    CustomerInfo midvale = new CustomerInfo("Midvale", 1000)
+                               .withPowerType(PowerType.CONSUMPTION);
     customerRepo.add(midvale);
+
     // create a Timeslot for use by the bootstrap data
     Timeslot ts0 = new Timeslot(8*24, baseTime.plus(TimeService.DAY * 8));
     when(timeslotRepo.currentTimeslot()).thenReturn(ts0);

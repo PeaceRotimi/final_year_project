@@ -79,8 +79,11 @@ implements Initializable
    */
   public void handleMessage (BankTransaction btx)
   {
-    // TODO - handle this
-    sendToRedis("bank_transaction",btx);
+    if(btx != null){
+      sendToRedis("bank-transactions", btx);
+      log.info("Published Bank Transaction: " + btx.getAmount());
+    }
+
   }
 
   /**
@@ -88,9 +91,10 @@ implements Initializable
    */
   public void handleMessage (CashPosition cp)
   {
-    cash = cp.getBalance();
-    log.info("Cash position: " + cash);
-    sendToRedis("cash_position", cash);
+    if (cp != null) {
+      sendToRedis("bank-transactions", cp);
+      log.info("Published Cash Position: current balance -" + cp.getBalance());
+    }
   }
 
   /**
@@ -99,7 +103,10 @@ implements Initializable
    */
   public void handleMessage (DistributionReport dr)
   {
-    sendToRedis("distribution_report",dr);
+    if (dr != null) {
+      sendToRedis("wholesale-market", dr);
+      log.info("Published Distribution Report - Timeslot " + dr.getTimeslot() + " total consumption=" + dr.getTotalConsumption() + ", total production=" + dr.getTotalProduction());
+    }
   }
 
   /**
@@ -109,7 +116,10 @@ implements Initializable
    */
   public void handleMessage (Competition comp)
   {
-    sendToRedis("competion_info",comp);
+    if (comp != null) {
+      sendToRedis("game-state", comp);
+      log.info("Published Competition info: " + comp.getName());
+    }
   }
 
   /**
@@ -117,7 +127,10 @@ implements Initializable
    */
   public void handleMessage (java.util.Properties serverProps)
   {
-    sendToRedis("server_props",serverProps);
+    if (serverProps != null) {
+      sendToRedis("game-state", serverProps);
+      log.info("Published Server Properties: " + serverProps.size() + " config rules received");
+    }
 
   }
 

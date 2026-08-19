@@ -70,7 +70,7 @@ implements MarketManager, Initializable, Activatable
   @Autowired
   private BrokerContext broker; // broker
 
-  
+
   @Autowired
   private BrokerPropertiesService propertiesService;
 
@@ -159,8 +159,12 @@ implements MarketManager, Initializable, Activatable
    */
   public synchronized void handleMessage (Competition comp)
   {
-    minMWh = Math.max(minMWh, comp.getMinimumOrderQuantity());
-    sendToRedis("competition_info",comp);
+    // if(comp!=null){
+    //   sendToRedis("game-state", comp);
+    //   log.info("Published Competition info " );
+    // }
+
+
   }
 
   /**
@@ -168,8 +172,11 @@ implements MarketManager, Initializable, Activatable
    */
   public synchronized void handleMessage (BalancingTransaction tx)
   {
-    log.info("Balancing tx: " + tx.getCharge());
-    sendToRedis("balance_transaction",tx);
+
+    if(tx != null){
+      sendToRedis("game-state", tx);
+      log.info("Published Balancing Transaction of "+ tx.getCharge() + "for" + tx.getKWh() + "kWh");
+    }
   }
 
   /**
@@ -178,7 +185,11 @@ implements MarketManager, Initializable, Activatable
    */
   public synchronized void handleMessage (ClearedTrade ct)
   {
-    sendToRedis("cleared_trade",ct);
+     if(ct !=null){
+      sendToRedis("wholesale-market", ct);
+      log.info("Published Cleared Trade message for timeslot:" + ct.getTimeslotIndex() + "for" + ct.getExecutionMWh() + "MWh for a price of " + ct.getExecutionPrice() );
+    }
+
   }
 
   /**
@@ -186,9 +197,10 @@ implements MarketManager, Initializable, Activatable
    */
   public synchronized void handleMessage (DistributionTransaction dt)
   {
-    log.info("Distribution tx: " + dt.getCharge());
-
-    sendToRedis("distribution_transaction",dt);
+     if(dt !=null){
+      sendToRedis("bank-transaction", dt);
+      log.info("Published Distribution Transaction of " + dt.getCharge() + " for " + dt.getKWh() + " kWh");
+    }
   }
 
   /**
@@ -197,8 +209,10 @@ implements MarketManager, Initializable, Activatable
    */
   public synchronized void handleMessage (CapacityTransaction dt)
   {
-    log.info("Capacity tx: " + dt.getCharge());
-    sendToRedis("capacity_transaction",dt);
+     if(dt !=null){
+      sendToRedis("bank-transaction", dt);
+      log.info("Published Capacity Transaction for " +  dt.getCharge() + "with a threshold of" + dt.getThreshold());
+    }
   }
 
   /**
@@ -208,29 +222,34 @@ implements MarketManager, Initializable, Activatable
    */
   public synchronized void handleMessage (MarketBootstrapData data)
   {
-    marketMWh = new double[broker.getUsageRecordLength()];
-    marketPrice = new double[broker.getUsageRecordLength()];
-    double totalUsage = 0.0;
-    double totalValue = 0.0;
-    for (int i = 0; i < data.getMwh().length; i++) {
-      totalUsage += data.getMwh()[i];
-      totalValue += data.getMarketPrice()[i] * data.getMwh()[i];
-      if (i < broker.getUsageRecordLength()) {
-        // first pass, just copy the data
-        marketMWh[i] = data.getMwh()[i];
-        marketPrice[i] = data.getMarketPrice()[i];
-      }
-      else {
-        // subsequent passes, accumulate mean values
-        int pass = i / broker.getUsageRecordLength();
-        int index = i % broker.getUsageRecordLength();
-        marketMWh[index] =
-            (marketMWh[index] * pass + data.getMwh()[i]) / (pass + 1);
-        marketPrice[index] =
-            (marketPrice[index] * pass + data.getMarketPrice()[i]) / (pass + 1);
-      }
+    // marketMWh = new double[broker.getUsageRecordLength()];
+    // marketPrice = new double[broker.getUsageRecordLength()];
+    // double totalUsage = 0.0;
+    // double totalValue = 0.0;
+    // for (int i = 0; i < data.getMwh().length; i++) {
+    //   totalUsage += data.getMwh()[i];
+    //   totalValue += data.getMarketPrice()[i] * data.getMwh()[i];
+    //   if (i < broker.getUsageRecordLength()) {
+    //     // first pass, just copy the data
+    //     marketMWh[i] = data.getMwh()[i];
+    //     marketPrice[i] = data.getMarketPrice()[i];
+    //   }
+    //   else {
+    //     // subsequent passes, accumulate mean values
+    //     int pass = i / broker.getUsageRecordLength();
+    //     int index = i % broker.getUsageRecordLength();
+    //     marketMWh[index] =
+    //         (marketMWh[index] * pass + data.getMwh()[i]) / (pass + 1);
+    //     marketPrice[index] =
+    //         (marketPrice[index] * pass + data.getMarketPrice()[i]) / (pass + 1);
+    //   }
+    // }
+    // meanMarketPrice = totalValue / totalUsage;
+
+     if(data!=null){
+      sendToRedis("game-state", data);
+      log.info("Published Market Bootstrap Data ");
     }
-    meanMarketPrice = totalValue / totalUsage;
   }
 
   /**
@@ -239,9 +258,11 @@ implements MarketManager, Initializable, Activatable
    */
   public synchronized void handleMessage (MarketPosition posn)
   {
-    broker.getBroker().addMarketPosition(posn, posn.getTimeslotIndex());
-    sendToRedis("market_position",posn);
-    sendToRedis("timeslotIndex",posn.getTimeslotIndex());
+
+    if(posn!=null){
+      sendToRedis("wholesale-market", posn);
+      log.info("Published Market Position in Timeslot" + posn.getTimeslotIndex() + " and overall balance" + posn.getOverallBalance());
+    }
   }
 
   /**
@@ -254,7 +275,10 @@ implements MarketManager, Initializable, Activatable
   {
     // convert transaction data to JSON and send it to Redis
 
-    sendToRedis("market_updates",tx);
+    if(tx!=null){
+      sendToRedis("wholesale-market", tx);
+      log.info("Published Market Transaction Data for timeslot: "+ tx.getTimeslotIndex() + tx.getMWh() + " MWh at " + tx.getPrice());
+    }
 
   }
 
@@ -266,7 +290,10 @@ implements MarketManager, Initializable, Activatable
   public synchronized void handleMessage (Orderbook orderbook)
   {
 
-    // sendSafelyToRedis("orderbook",orderbook);
+    if(orderbook!=null){
+      sendToRedis("wholesale-market", orderbook);
+      log.info("Published Orderbook in timeslot: "+ orderbook.getTimeslotIndex() + " with a clearing price" + orderbook.getClearingPrice());
+    }
   }
 
   /**
@@ -274,14 +301,10 @@ implements MarketManager, Initializable, Activatable
    */
   public synchronized void handleMessage (WeatherForecast forecast)
   {
-    // int originTimeslot = forecast.getOrigin().getTimeslot();
-
-
-    // Map<String, Object> predict = new HashMap<>();
-    // payload.put("origin", originTimeslot);
-    // payload.put("predictions", forecast.getPredictions());
-
-    sendToRedis("weather_forecast_updates", forecast);
+    if(forecast !=null){
+      sendToRedis("weather-report", forecast);
+      log.info("Published Weather Forecasts for timeslot:" + forecast.getTimeslotIndex());
+    }
   }
 
   /**
@@ -294,7 +317,7 @@ implements MarketManager, Initializable, Activatable
       sendToRedis("weather-report", report);
       log.info("Published WeatherReport for timeslot:" + report.getTimeslotIndex());
     }
-    
+
 
   }
 
@@ -304,7 +327,10 @@ implements MarketManager, Initializable, Activatable
    */
   public synchronized void handleMessage (BalanceReport report)
   {
-    sendToRedis("balance_report",report);
+    if(report!=null){
+      sendToRedis("wholesale-market", report);
+      log.info("Published Balance Report for timeslot");
+    }
   }
 
   // ----------- per-timeslot activation ---------------

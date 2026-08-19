@@ -17,10 +17,10 @@ repos:
 #        always_run: true
 #        stages: [pre-commit]
 
-   #  -  id: run-pytest
-   #     name: run-pytest
-   #     entry: bash -c "export PYTHONPATH=$PYTHONPATH:Brokers/baseline-broker && Brokers/baseline-broker/venv/bin/python -m pytest Brokers/baseline-broker"
-   #     language: system
-   #     always_run: true
-   #     pass_filenames: false
-   #     stages: [pre-commit]
+#     -  id: run-pytest
+#        name: run-pytest
+#        entry: bash -c "export PYTHONPATH=$PYTHONPATH:Brokers/baseline-broker && Brokers/baseline-broker/venv/bin/python -m pytest Brokers/baseline-broker"
+#        language: system
+#        always_run: true
+#        pass_filenames: false
+#        stages: [pre-commit]
